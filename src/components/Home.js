@@ -1,38 +1,46 @@
-import {useEffect} from 'react'
-import Posts from './Posts'
-import { useAuth } from '../context/auth/authContext'
-const Home = () => {
+import { useEffect } from "react";
+import Posts from "./Posts";
+import { useAuth } from "../context/auth/authContext";
 
-  const {user, getUser} = useAuth()
+const Home = () => {
+  const { user, getUser } = useAuth();
 
   useEffect(() => {
-    getUser()
+    getUser();
     // eslint-disable-next-line
-  }, [])
-  
-  const today = new Date()
-  const curHr = today.getHours()
+  }, []);
 
-  const greetings = () => {
+  const today = new Date();
+  const curHr = today.getHours();
+
+  const getGreetingText = () => {
     if (curHr < 12) {
-      return('Good Morning')
+      return "Good Morning";
     } else if (curHr < 18) {
-     return('Good Afternoon')
-    } else {
-      return('Good Evening')
+      return "Good Afternoon";
     }
-  }
+    return "Good Evening";
+  };
+
+  const greetingText = getGreetingText();
 
   return (
-    <div style={{marginTop: "70px", marginBottom: "80px"}}>
-      {user && <div className='greetings'>
-         <strong><span className='text-muted'>{greetings()},</span></strong><br />
-        <span className='h1 text-capitalize'><strong>{user.name}</strong></span>
-      </div>}
+    <div className="component-style">
+      {user && (
+        <div className="greetings">
+          <strong>
+            <span className="text-muted">{greetingText},</span>
+          </strong>
+          <br />
+          <span className="h1 text-capitalize">
+            <strong>{user.name}</strong>
+          </span>
+        </div>
+      )}
 
       <Posts />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

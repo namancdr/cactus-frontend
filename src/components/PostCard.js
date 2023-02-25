@@ -1,176 +1,285 @@
-import { useEffect, useState } from 'react'
-import likeIcon from '../assets/like.png'
-import commentIcon from '../assets/comment.png'
-import likedIcon from '../assets/liked.png'
-import shareIcon from '../assets/share.png'
-import saveIcon from '../assets/save-icon.png'
-import savedIcon from '../assets/saved-icon.png'
-import { usePost } from '../context/post/postContext'
-import { useAuth } from "../context/auth/authContext"
-import Comment from './Comment'
-
-
+import { useEffect, useState, useCallback } from "react";
+import likeIcon from "../assets/like.png";
+import commentIcon from "../assets/comment.png";
+import likedIcon from "../assets/liked.png";
+import saveIcon from "../assets/save-icon.png";
+import savedIcon from "../assets/saved-icon.png";
+import timeSince from "../utils/timeSince";
+import { storage } from "../firebase";
+import { ref, deleteObject } from "firebase/storage";
+import { toast } from "react-toastify";
+import { useAuth } from "../context/auth/authContext";
+import { usePost } from "../context/post/postContext";
+import Modal from "react-modal";
+import Comment from "./Comment";
 
 const PostCard = (props) => {
+  const { post, showOptions } = props;
+  const {
+    likePost,
+    unlikePost,
+    fetchAllPosts,
+    fetchUsersPosts,
+    fetchAllComments,
+    fetchBookmarks,
+    bookmarkPost,
+    deleteBookmark,
+    comments,
+    deletePost,
+    editPost,
+  } = usePost();
+  const { user } = useAuth();
+  const [likes, setLikes] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [commentVisibility, setCommentVisibility] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-    const {post} = props
-    const {likePost, unlikePost, fetchAllPosts, bookmarkPost, deleteBookmark, comments, fetchAllComments} = usePost()
-    const {user} = useAuth()
-    const [likes, setLikes] = useState(0);
-    const [liked, setLiked] = useState(false);
-    const [saved, setSaved] = useState(false)
-    const [commentVisibility, setCommentVisibility] = useState(false)
-    
-    useEffect(() => {
-      fetchAllComments()
-      const operations = async() => {
-        try {
-          await fetchAllPosts()
-          setLikes(post.likes.length)
-          setLiked(post.likes.includes(user._id))
-        } catch (error) {
-          console.error(error)
-        }
-      }
-      
-      user && setSaved(user.bookmarkedPosts.includes(post._id)) 
-
-      operations()
-      // eslint-disable-next-line
-    }, [likes])
-
-    // Like handling /////////////////////////////////////////////////////////////////
-    const handleLike = async() => {
+  const initPostCard = useCallback(async () => {
+    if (user && post) {
       try {
-        if (liked) {
-          await unlikePost(post._id)
-          setLiked(false)
-          setLikes(likes - 1);
-        } else {
-          await likePost(post._id)
-          setLiked(true)
-          setLikes(likes + 1)
-        }
+        await fetchAllPosts();
+        await fetchUsersPosts();
+        setLikes(post.likes.length);
+        setLiked(post.likes.includes(user._id));
       } catch (error) {
         console.error(error);
       }
     }
+  }, [likes]); // eslint-disable-line
 
-    const handleCommentBtn = () => {
-      setCommentVisibility(!commentVisibility)
-    }
+  useEffect(() => {
+    if (user) setSaved(user.bookmarkedPosts?.includes(post._id));
+    initPostCard();
+    // eslint-disable-next-line
+  }, [likes]);
 
-    const handleShare = () => {
-      alert('share')
-    }
+  useEffect(() => {
+    fetchAllComments();
+  }, []); // eslint-disable-line
 
-    // Bookmark Post handling //////////////////////////////////////////////////////
-    const handleSave = async() => {
-      try {
-        if(saved){
-          await deleteBookmark(post._id)
-          setSaved(false)
-        } else{
-          await bookmarkPost(post._id)
-          setSaved(true)
-        }
-      } catch (error) {
-        console.error(error);
+  // Like handling /////////////////////////////////////////////////////////////////
+  const handleLike = async () => {
+    try {
+      if (liked) {
+        await unlikePost(post._id);
+        setLiked(false);
+        setLikes(likes - 1);
+      } else {
+        await likePost(post._id);
+        setLiked(true);
+        setLikes(likes + 1);
       }
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    // function to format date in seconds/minutes/hours/days ago
-    const timeSince = (date) => {
-        if (typeof date !== 'object') {
-          date = new Date(date);
-        }
-      
-        const seconds = Math.floor((new Date() - date) / 1000);
-        let intervalType;
-      
-        let interval = Math.floor(seconds / 31536000);
-        if (interval >= 1) {
-          intervalType = 'year';
-        } else {
-          interval = Math.floor(seconds / 2592000);
-          if (interval >= 1) {
-            intervalType = 'month';
-          } else {
-            interval = Math.floor(seconds / 86400);
-            if (interval >= 1) {
-              intervalType = 'day';
-            } else {
-              interval = Math.floor(seconds / 3600);
-              if (interval >= 1) {
-                intervalType = "hour";
-              } else {
-                interval = Math.floor(seconds / 60);
-                if (interval >= 1) {
-                  intervalType = "minute";
-                } else {
-                  interval = seconds;
-                  intervalType = "second";
-                }
-              }
-            }
-          }
+  //   handle comment visibility
+  const handleCommentBtn = () => {
+    setCommentVisibility(!commentVisibility);
+  };
+
+  const filteredComments =
+    comments && comments.filter((comment) => comment.post._id === post._id);
+
+  // Post delete handling
+  // deleting image and text seperately as image is stored in firebase
+  const deleteRef = ref(storage, post.imagePath);
+
+  const handleDelete = (id) => {
+    post.image &&
+      deleteObject(deleteRef)
+        .then(() => {
+          console.log("Post deleted");
+        })
+        .catch((error) => {
+          toast(error, { theme: "dark" });
+        });
+
+    deletePost(id);
+  };
+
+  // Bookmark Post handling //////////////////////////////////////////////////////
+  const handleSave = async () => {
+    try {
+      if (saved) {
+        await deleteBookmark(post._id);
+        setSaved(false);
+      } else {
+        await bookmarkPost(post._id);
+        setSaved(true);
       }
-    
-      if (interval > 1 || interval === 0) {
-        intervalType += 's'
-      }
-    
-      return interval + ' ' + intervalType;
-    };
-        
+      fetchBookmarks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const filteredComments = comments && comments.filter((comment) => comment.post._id === post._id)
+  // Edit post handling
 
-    return(
-        <>
-        <div className="container post-card d-flex flex-column justify-content-center mt-2">
-          
-            <div className="post-header d-flex align-items-center mt-2">
-                <div className="post-profile-pic-container">
-                    <img src='https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg' className="post-profile-pic img-fluid" alt="profile" />
-                </div>
-                <div className="mx-3" style={{lineHeight: "1.1"}}>
-                    <span style={{fontSize: "16px"}}>{post.user.name}</span><br />
-                    <span style={{fontSize: "12px"}} className="small">{timeSince(post.date) + " ago"}</span>
-                </div>
-            </div>
-            {post.image && <div className="post-img mt-2">
-                 <img src={post.image} className="img-fluid" alt="post" /> 
-            </div>
-            }
-            <div className="post-text">
-                <p className='mt-3'>{post.textData}</p>
-            </div>
+  // edit post modal style
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
 
-            {/* Post engagement */}
-            <div className="post-engagement">
-                <div className="d-flex justify-content-between">
-                  <div>
-                    <img className='me-2' src={liked ? likedIcon : likeIcon} alt="like" onClick={handleLike} />
-                    <img className='mx-2' src={commentIcon} alt="comment" onClick={handleCommentBtn} />
-                    <img className='mx-2' src={shareIcon} alt="share" onClick={handleShare} />
-                  </div>
+  Modal.setAppElement(document.getElementById("root"));
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [newPostData, setNewPostData] = useState({ id: "", textData: "" });
 
-                  <div>
-                    <img className='mx-2' src={saved ? savedIcon : saveIcon} alt="share" onClick={handleSave} />
-                  </div>
-                    
-                </div>
-                <div className="d-flex mt-2">
-                    <p className='small'>{post.likes.length} <span className='text-muted'>likes</span> &nbsp;&nbsp; • &nbsp;&nbsp; {filteredComments && filteredComments.length} <span className='text-muted'>comments</span></p>
-                </div>
-            </div>
+  const openModal = (currentPost) => {
+    setIsOpen(true);
+    setNewPostData({ id: currentPost._id, textData: currentPost.textData });
+  };
 
-            {/* Comment section */}
-            {commentVisibility ? <Comment post={post} /> : null}
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    await editPost(newPostData._id, newPostData.textData);
+    fetchUsersPosts();
+    closeModal();
+  };
+
+  const handleEditChange = (e) => {
+    setNewPostData({ ...post, [e.target.name]: e.target.value });
+  };
+
+  return (
+    <div>
+      {/* Edit post Modal */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={customStyles}
+        contentLabel="Edit Note Modal"
+      >
+        <form className="my-4" onSubmit={handleEdit}>
+          <h2>Edit Post</h2>
+          <div className="mb-3">
+            <label htmlFor="textData" className="form-label">
+              Caption
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              name="textData"
+              id="textData"
+              value={newPostData.textData}
+              onChange={handleEditChange}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Update
+          </button>
+        </form>
+      </Modal>
+      <div className="container post-card d-flex flex-column justify-content-center mt-4">
+        <div className="post-header d-flex align-items-center mt-2">
+          <div className="post-profile-pic-container">
+            <img
+              src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+              className="post-profile-pic img-fluid"
+              alt="profile"
+            />
+          </div>
+          <div className="mx-3" style={{ lineHeight: "1.1" }}>
+            <span style={{ fontSize: "16px" }}>
+              {post.user.name || user.username}
+            </span>
+            <br />
+            <span style={{ fontSize: "12px" }} className="small text-muted">
+              {timeSince(post.date) + " ago"}
+            </span>
+          </div>
+
+          {showOptions ? (
+            <>
+              <div
+                className="post-option-btn"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="bi bi-three-dots-vertical"></i>
+              </div>
+              <ul className="dropdown-menu">
+                <li
+                  className="dropdown-item"
+                  onClick={() => {
+                    handleDelete(post._id);
+                  }}
+                >
+                  Delete Post
+                </li>
+                <li
+                  className="dropdown-item"
+                  onClick={() => {
+                    openModal(post);
+                  }}
+                >
+                  Edit Post
+                </li>
+              </ul>
+            </>
+          ) : null}
         </div>
-        </>
-    )
-}
 
-export default PostCard
+        {post.image && (
+          <div className="post-img mt-3">
+            <img src={post.image} className="img-fluid" alt="post" />
+          </div>
+        )}
+        <div className="post-text">
+          <p className="my-3">{post.textData}</p>
+        </div>
+        <div className="post-engagement">
+          <div className="d-flex justify-content-between">
+            <div>
+              <img
+                className="me-2"
+                src={liked ? likedIcon : likeIcon}
+                alt="like"
+                onClick={handleLike}
+              />
+              <img
+                className="mx-2"
+                src={commentIcon}
+                alt="comment"
+                onClick={handleCommentBtn}
+              />
+            </div>
+
+            <div>
+              <img
+                className="mx-2"
+                src={saved ? savedIcon : saveIcon}
+                // src={saveIcon}
+                alt="Save"
+                onClick={handleSave}
+              />
+            </div>
+          </div>
+          <div className="d-flex mt-2">
+            <p className="small">
+              {post.likes.length} <span className="text-muted">likes</span>{" "}
+              &nbsp;&nbsp; • &nbsp;&nbsp;{" "}
+              {filteredComments && filteredComments.length}{" "}
+              <span className="text-muted">comments</span>
+            </p>
+          </div>
+        </div>
+        {commentVisibility ? <Comment post={post} /> : null}
+      </div>
+    </div>
+  );
+};
+
+export default PostCard;
