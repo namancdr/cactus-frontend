@@ -178,6 +178,29 @@ const useFetch = () => {
     return response;
   };
 
+
+  // User APIs
+  
+  const uploadProfilePicAPI = async (image, imagePath) => {
+    const response = await sendRequest(
+      `/api/user/uploadprofilepic`,
+      "POST",
+      JSON.stringify({image, imagePath}),
+      true
+    );
+    return response;
+  };
+
+  const deleteProfilePicAPI = async () => {
+    const response = await sendRequest(
+      `/api/user/deleteprofilepic`,
+      "DELETE",
+      null,
+      true
+    );
+    return response;
+  };
+
   return {
     fetchAllPostsAPI,
     createPostAPI,
@@ -193,7 +216,9 @@ const useFetch = () => {
     fetchBookmarksAPI,
     createUserAPI,
     loginUserAPI,
-    getUserAPI
+    getUserAPI,
+    uploadProfilePicAPI,
+    deleteProfilePicAPI
   };
 };
 

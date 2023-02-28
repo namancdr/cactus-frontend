@@ -15,7 +15,7 @@ const Signup = () => {
     password: "",
     cpassword: "",
   });
-
+  const [loading, setLoading] = useState(false)
   const { name, email, username, password, cpassword } = formData;
 
   const handleChange = (e) => {
@@ -27,11 +27,14 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     if (cpassword === password) {
       await createUser(formData);
+      setLoading(false)
       navigate("/");
     } else {
       console.log("Password do not match!");
+      setLoading(false)
     }
   };
 
@@ -105,7 +108,10 @@ const Signup = () => {
         </div>
         <div className="d-grid my-4">
           <button type="submit" className="btn btn-primary">
-            Sign up
+          {loading 
+          ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          : 'Signup'
+        }
           </button>
         </div>
       </form>

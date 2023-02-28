@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { usePost } from "../context/post/postContext";
+import defaultProfilePic from "../assets/default-profile.png";
 
 const Comment = (props) => {
   const { post } = props;
@@ -35,14 +36,27 @@ const Comment = (props) => {
         <span onClick={handleComment}>Post</span>
       </div>
       {comments
-        ? filteredComments.map((comment) => {
-            return (
-              <div key={comment._id}>
-                <b>{comment.user.name}</b> <span>{comment.commentText}</span>
-                <hr />
-              </div>
-            );
-          })
+        ? filteredComments
+            .slice()
+            .reverse()
+            .map((comment) => {
+              return (
+                <div key={comment._id} className="d-flex mt-2">
+                  <img
+                    className="comment-profile-pic"
+                    src={
+                      comment.user.image
+                        ? comment.user.image
+                        : defaultProfilePic
+                    }
+                    alt=""
+                  />
+                  <b className="mx-1">{comment.user.name}</b>{" "}
+                  <span className="mx-1">{comment.commentText}</span>
+                  <hr />
+                </div>
+              );
+            })
         : null}
     </div>
   );

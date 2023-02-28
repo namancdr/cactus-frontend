@@ -26,17 +26,17 @@ const Home = () => {
 
   return (
     <div className="component-style">
-      {user && (
-        <div className="greetings">
+      {user ? (
+        <div className="container">
           <strong>
             <span className="text-muted">{greetingText},</span>
           </strong>
           <br />
           <span className="h1 text-capitalize">
             <strong>{user.name}</strong>
-          </span>
+          </span><hr />
         </div>
-      )}
+      ) : null}
 
       <Posts />
     </div>

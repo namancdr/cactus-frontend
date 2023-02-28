@@ -1,12 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/auth/authContext";
 import { usePost } from "../context/post/postContext";
 import PostCard from "./PostCard";
 import ContentLoading from "./ContentLoading";
+import DefaultProfilePic from "../assets/default-profile.png";
+import Modal from "react-modal";
+import pictureIcon from "../assets/picture-icon.png";
+import trashIcon from "../assets/trash-icon.png";
+import { v4 } from "uuid";
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { useUser } from "../context/user/userContext";
+import { toast } from "react-toastify";
 
-const Profile = (props) => {
+
+
+const Profile = () => {
   const { user, getUser } = useAuth();
   const { fetchUsersPosts, usersPost } = usePost();
+  const { uploadProfilePic, deleteProfilePic } = useUser();
+  const [formVisiblity, setFormVisiblity] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getUser();
@@ -15,13 +29,137 @@ const Profile = (props) => {
     // eslint-disable-next-line
   }, []);
 
+  const [imageUpload, setImageUpload] = useState(null);
+  const deleteRef = ref(storage, user.imagePath);
+
+  const handleSubmit = async (e) => {
+    setLoading(true)
+    e.preventDefault();
+
+    // Delete the old profile picture from firebase
+    if(user.image && user.imagePath){
+      deleteObject(deleteRef)
+        .then(() => {
+          console.log("Old profile picture deleted");
+        })
+        .catch((error) => {
+          toast(error, { theme: "dark" });
+        });
+    }
+
+    // Upload new profile picture to firebase
+    if (imageUpload) {
+      const imagePath = `profilepic/${imageUpload.name + v4()}`;
+      const imageRef = ref(storage, imagePath);
+      await uploadBytes(imageRef, imageUpload).then(() => {
+        console.log("image uploaded");
+      });
+
+      const image = await getDownloadURL(imageRef).then((url) => {
+        return url;
+      });
+
+      if (image) await uploadProfilePic(image, imagePath);
+      setLoading(false)
+      closeModal()
+      getUser()
+    }
+  };
+
+
+  const handleProfilePicDelete = async() => {
+    setLoading(true)
+    user.image &&
+      deleteObject(deleteRef)
+        .then(() => {
+          console.log("Profile Picture deleted");
+        })
+        .catch((error) => {
+          toast(error, { theme: "dark" });
+        });
+
+      await deleteProfilePic();
+      closeModal()
+      getUser()
+      setLoading(false)
+  }
+
   const capitaliseText = (text) => {
     const str = text;
     const str2 = str.charAt(0).toUpperCase() + str.slice(1);
     return str2;
   };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      background: "#0B0A0D",
+      maxHeight: "400px",
+      maxWidth: "350px",
+      width: "330px",
+    },
+  };
+
+  Modal.setAppElement(document.getElementById("root"));
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const openModal = (currentPost) => {
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className="component-style">
+      <div className="modal-container">
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Edit Note Modal"
+          overlayClassName="modal-overlay"
+        >
+          <div>
+            <p onClick={() => setFormVisiblity(!formVisiblity)}>
+              <img src={pictureIcon} alt="" />
+              {formVisiblity ? " Cancel" : " New profile picture"}
+            </p>
+            {user.image ? (
+              <p onClick={handleProfilePicDelete}>
+                <img src={trashIcon} alt="" /> Delete current picture
+              </p>
+            ) : null}
+          </div>
+          {formVisiblity ? (
+            <form className="my-4" onSubmit={handleSubmit}>
+              <input
+                type="file"
+                className="form-control"
+                id="exampleInputImage1"
+                name="image"
+                aria-describedby="imageHelp"
+                onChange={(event) => {
+                  setImageUpload(event.target.files[0]);
+                }}
+              />
+              <button className={`btn btn-primary ${imageUpload ? '' : 'disabled'} mt-2`} type="submit">
+              {loading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : 'Upload'}
+              </button>
+            </form>
+          ) : null}
+          <button className="btn btn-danger" onClick={closeModal}>
+            close
+          </button>
+        </Modal>
+      </div>
+
       {/* Profile */}
       {user && (
         <div
@@ -30,9 +168,10 @@ const Profile = (props) => {
         >
           <div className="">
             <img
-              src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+              src={user.image ? user.image : DefaultProfilePic}
               className="profile-pic img-fluid"
               alt="profile"
+              onClick={openModal}
             />
             <div className="text-center mt-2" style={{ lineHeight: "1.1" }}>
               <span className="text-muted small">@{user.username}</span>

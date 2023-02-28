@@ -12,6 +12,7 @@ import { useAuth } from "../context/auth/authContext";
 import { usePost } from "../context/post/postContext";
 import Modal from "react-modal";
 import Comment from "./Comment";
+import DefaultProfilePic from '../assets/default-profile.png'
 
 const PostCard = (props) => {
   const { post, showOptions } = props;
@@ -182,11 +183,11 @@ const PostCard = (props) => {
           </button>
         </form>
       </Modal>
-      <div className="container post-card d-flex flex-column justify-content-center mt-4">
+      <div className="container post-card d-flex flex-column justify-content-center mt-2">
         <div className="post-header d-flex align-items-center mt-2">
           <div className="post-profile-pic-container">
             <img
-              src="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+              src={post.user.image ? post.user.image : DefaultProfilePic}
               className="post-profile-pic img-fluid"
               alt="profile"
             />
@@ -277,6 +278,7 @@ const PostCard = (props) => {
           </div>
         </div>
         {commentVisibility ? <Comment post={post} /> : null}
+        <hr />
       </div>
     </div>
   );

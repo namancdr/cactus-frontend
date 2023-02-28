@@ -12,7 +12,7 @@ const Login = () => {
     email: "",
     password: "",
   });
-
+  const [loading, setLoading] = useState(false);
   const { email, password } = formData;
 
   const handleChange = (e) => {
@@ -24,7 +24,9 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await loginUser(formData);
+    setLoading(false);
     navigate("/");
   };
 
@@ -59,7 +61,15 @@ const Login = () => {
         </div>
         <div className="d-grid my-4">
           <button type="submit" className="btn btn-primary">
-            Login
+            {loading ? (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            ) : (
+              "Login"
+            )}
           </button>
         </div>
       </form>
