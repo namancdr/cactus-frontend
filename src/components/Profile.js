@@ -61,8 +61,10 @@ const Profile = () => {
 
       if (image) await uploadProfilePic(image, imagePath);
       setLoading(false)
-      closeModal()
       getUser()
+      fetchUsersPosts();
+      closeModal()
+
     }
   };
 
@@ -161,7 +163,7 @@ const Profile = () => {
       </div>
 
       {/* Profile */}
-      {user && (
+      {user && usersPost ? (
         <div
           className="container profile-section d-flex align-items-center justify-content-center flex-column"
           style={{ marginTop: "70px" }}
@@ -173,13 +175,28 @@ const Profile = () => {
               alt="profile"
               onClick={openModal}
             />
-            <div className="text-center mt-2" style={{ lineHeight: "1.1" }}>
-              <span className="text-muted small">@{user.username}</span>
+            <div className="text-center mt-2" style={{ lineHeight: "0" }}>
               <h5>{user.name && capitaliseText(user.name)}</h5>
+              <span className="text-muted small">@{user.username}</span>
+            </div>
+          </div>
+
+          <div className="profile-info mt-4 row d-flex align-items-center">
+            <div className="text-center col lh-half">
+              <span className="h5">{usersPost.length}</span><br />
+              <span className="small text-muted">Posts</span>
+            </div>
+            <div className="text-center col lh-half">
+              <span className="h5">{user?.followers.length}</span><br />
+              <span className="small text-muted">Followers</span>
+            </div>
+            <div className="text-center col lh-half">
+              <span className="h5">{user?.following.length}</span><br />
+              <span className="small text-muted">Following</span>
             </div>
           </div>
         </div>
-      )}
+      ) : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
 
       {/* Post section */}
       <div className=" mid-heading-text mt-4 container">
@@ -191,10 +208,6 @@ const Profile = () => {
             "You have not posted anything yet!"}
         </span>
       </div>
-      {/* {usersPost ? usersPost.slice().reverse().map((post) => {
-          return <UserPostCard key={post._id} usersPost={post} username={user.username} />
-        }):  <ContentLoading />} */}
-
       {usersPost ? (
         usersPost
           .slice()

@@ -14,6 +14,8 @@ import CreatePost from "./components/CreatePost";
 import Profile from "./components/Profile";
 import { ToastContainer } from "react-toastify";
 import Bookmarks from "./components/Bookmarks";
+import PublicProfile from "./components/PublicProfile";
+import Search from "./components/Search";
 
 function App() {
   return (
@@ -60,7 +62,22 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-
+                <Route
+                  path="/user/:username"
+                  element={
+                    <PrivateRoute>
+                      <PublicProfile />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/search"
+                  element={
+                    <PrivateRoute>
+                      <Search />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path="/createpost"
                   element={

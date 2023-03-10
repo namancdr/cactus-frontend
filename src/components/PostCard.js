@@ -12,7 +12,8 @@ import { useAuth } from "../context/auth/authContext";
 import { usePost } from "../context/post/postContext";
 import Modal from "react-modal";
 import Comment from "./Comment";
-import DefaultProfilePic from '../assets/default-profile.png'
+import DefaultProfilePic from "../assets/default-profile.png";
+import { Link } from "react-router-dom";
 
 const PostCard = (props) => {
   const { post, showOptions } = props;
@@ -34,6 +35,7 @@ const PostCard = (props) => {
   const [liked, setLiked] = useState(false);
   const [commentVisibility, setCommentVisibility] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const initPostCard = useCallback(async () => {
     if (user && post) {
@@ -88,6 +90,7 @@ const PostCard = (props) => {
   const deleteRef = ref(storage, post.imagePath);
 
   const handleDelete = (id) => {
+    setLoading(true);
     post.image &&
       deleteObject(deleteRef)
         .then(() => {
@@ -98,6 +101,7 @@ const PostCard = (props) => {
         });
 
     deletePost(id);
+    setLoading(false);
   };
 
   // Bookmark Post handling //////////////////////////////////////////////////////
@@ -184,54 +188,72 @@ const PostCard = (props) => {
         </form>
       </Modal>
       <div className="container post-card d-flex flex-column justify-content-center mt-2">
-        <div className="post-header d-flex align-items-center mt-2">
-          <div className="post-profile-pic-container">
-            <img
-              src={post.user.image ? post.user.image : DefaultProfilePic}
-              className="post-profile-pic img-fluid"
-              alt="profile"
-            />
-          </div>
-          <div className="mx-3" style={{ lineHeight: "1.1" }}>
-            <span style={{ fontSize: "16px" }}>
-              {post.user.name || user.username}
-            </span>
-            <br />
-            <span style={{ fontSize: "12px" }} className="small text-muted">
-              {timeSince(post.date) + " ago"}
-            </span>
-          </div>
+        <Link
+          to={
+            post.user._id === user._id
+              ? "/profile"
+              : `/user/${post.user.username}`
+          }
+          style={{ textDecoration: "none" }}
+        >
+          <div className="post-header d-flex align-items-center mt-2">
+            <div className="post-profile-pic-container">
+              <img
+                src={post.user.image ? post.user.image : DefaultProfilePic}
+                className="post-profile-pic img-fluid"
+                alt="profile"
+              />
+            </div>
+            <div className="mx-3" style={{ lineHeight: "1.1" }}>
+              <span style={{ fontSize: "16px" }}>
+                {post.user.name || user.username}
+              </span>
+              <br />
+              <span style={{ fontSize: "12px" }} className="small text-muted">
+                {timeSince(post.date) + " ago"}
+              </span>
+            </div>
 
-          {showOptions ? (
-            <>
-              <div
-                className="post-option-btn"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i className="bi bi-three-dots-vertical"></i>
-              </div>
-              <ul className="dropdown-menu">
-                <li
-                  className="dropdown-item"
-                  onClick={() => {
-                    handleDelete(post._id);
-                  }}
+            {showOptions ? (
+              <>
+                <div
+                  className="post-option-btn"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  Delete Post
-                </li>
-                <li
-                  className="dropdown-item"
-                  onClick={() => {
-                    openModal(post);
-                  }}
-                >
-                  Edit Post
-                </li>
-              </ul>
-            </>
-          ) : null}
-        </div>
+                  <i className="bi bi-three-dots-vertical"></i>
+                </div>
+                <ul className="dropdown-menu">
+                  <li
+                    className="dropdown-item"
+                    onClick={() => {
+                      handleDelete(post._id);
+                    }}
+                  >
+                    {loading ? (
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    ) : (
+                      "Delete"
+                    )}
+                  </li>{" "}
+                  <hr />
+                  <li
+                    className="dropdown-item"
+                    onClick={() => {
+                      openModal(post);
+                    }}
+                  >
+                    Edit Post
+                  </li>
+                </ul>
+              </>
+            ) : null}
+          </div>
+        </Link>
 
         {post.image && (
           <div className="post-img mt-3">

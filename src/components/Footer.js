@@ -4,6 +4,8 @@ import homeActiveIcon from "../assets/home-active.png";
 import profileActiveIcon from "../assets/profile-active.png";
 import saveFooterIcon from "../assets/save-footer.png";
 import saveFooterActiveIcon from "../assets/save-footer-active.png";
+import searchIcon from "../assets/search.png";
+import searchActiveIcon from "../assets/search-active.png";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../context/auth/authContext";
@@ -14,9 +16,9 @@ const Footer = () => {
 
   return (
     isAuthenticated && (
-      <>
-        <div className="footer d-flex justify-content-between position-fixed bottom-0 start-0 col-md-12">
-          <div className="home-icon-footer text-center p-2 col-4">
+      <div className="container-fluid d-flex justify-content-center position-fixed bottom-0 start-0">
+        <div className="footer d-flex justify-content-between col-md-12">
+          <div className="home-icon-footer text-center p-2 col-3">
             <Link to="/">
               <img
                 src={location.pathname === "/" ? homeActiveIcon : homeIcon}
@@ -24,7 +26,19 @@ const Footer = () => {
               />
             </Link>
           </div>
-          <div className="home-icon-footer text-center p-2 col-4">
+          <div className="home-icon-footer text-center p-2 col-3">
+            <Link to="/search">
+              <img
+                src={
+                  location.pathname === "/search"
+                    ? searchActiveIcon
+                    : searchIcon
+                }
+                alt="home"
+              />
+            </Link>
+          </div>
+          <div className="home-icon-footer text-center p-2 col-3">
             <Link to="/bookmarks">
               <img
                 src={
@@ -36,7 +50,7 @@ const Footer = () => {
               />
             </Link>
           </div>
-          <div className="profile-icon-footer text-center p-2 col-4">
+          <div className="profile-icon-footer text-center p-2 col-3">
             <Link to="/profile">
               <img
                 src={
@@ -49,7 +63,7 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-      </>
+      </div>
     )
   );
 };

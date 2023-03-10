@@ -201,6 +201,46 @@ const useFetch = () => {
     return response;
   };
 
+  const fetchotheruserdetailsAPI = async (username) => {
+    const response = await sendRequest(
+      `/api/user/fetchotheruserdetails/${username}`,
+      'GET',
+      null,
+      true
+    )
+    return response
+  }
+
+  const followUserAPI = async(id) => {
+    const response = await sendRequest(
+      `/api/user/${id}/followuser`,
+      'POST',
+      null,
+      true
+    )
+    return response
+  }
+
+  const unfollowUserAPI = async(id) => {
+    const response = await sendRequest(
+      `/api/user/${id}/unfollowuser`,
+      'POST',
+      null,
+      true
+    )
+    return response
+  }
+
+  const searchUserAPI = async(username) => {
+    const response = await sendRequest(
+      `/api/user/searchusers`,
+      "POST",
+      JSON.stringify({username}),
+      true
+    )
+    return response
+  }
+
   return {
     fetchAllPostsAPI,
     createPostAPI,
@@ -218,7 +258,11 @@ const useFetch = () => {
     loginUserAPI,
     getUserAPI,
     uploadProfilePicAPI,
-    deleteProfilePicAPI
+    deleteProfilePicAPI,
+    fetchotheruserdetailsAPI,
+    followUserAPI,
+    unfollowUserAPI,
+    searchUserAPI
   };
 };
 

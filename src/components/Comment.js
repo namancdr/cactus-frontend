@@ -18,6 +18,7 @@ const Comment = (props) => {
   const handleComment = async () => {
     await createComment(post._id, commentText);
     fetchAllComments();
+    setCommentText("");
   };
 
   const filteredComments =
@@ -41,7 +42,10 @@ const Comment = (props) => {
             .reverse()
             .map((comment) => {
               return (
-                <div key={comment._id} className="d-flex mt-2">
+                <div
+                  key={comment._id}
+                  className="d-flex align-items-center mt-2"
+                >
                   <img
                     className="comment-profile-pic"
                     src={
