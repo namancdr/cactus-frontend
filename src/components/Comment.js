@@ -33,6 +33,7 @@ const Comment = (props) => {
           className="form-control-sm commentInput"
           onChange={handleChange}
           value={commentText}
+          autoComplete="off"
         />
         <span onClick={handleComment}>Post</span>
       </div>

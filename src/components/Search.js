@@ -33,6 +33,7 @@ const Search = () => {
           className="form-control-sm commentInput"
           onChange={handleChange}
           value={searchInput}
+          autoComplete="off"
         />
         {/* <button className="btn btn-primary" onClick={() => searchUserCall(searchInput)}>search</button> */}
       </div>

@@ -9,18 +9,21 @@ import pictureIcon from "../assets/picture-icon.png";
 import trashIcon from "../assets/trash-icon.png";
 import { v4 } from "uuid";
 import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { useUser } from "../context/user/userContext";
 import { toast } from "react-toastify";
-
-
 
 const Profile = () => {
   const { user, getUser } = useAuth();
   const { fetchUsersPosts, usersPost } = usePost();
   const { uploadProfilePic, deleteProfilePic } = useUser();
   const [formVisiblity, setFormVisiblity] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getUser();
@@ -33,11 +36,11 @@ const Profile = () => {
   const deleteRef = ref(storage, user.imagePath);
 
   const handleSubmit = async (e) => {
-    setLoading(true)
+    setLoading(true);
     e.preventDefault();
 
     // Delete the old profile picture from firebase
-    if(user.image && user.imagePath){
+    if (user.image && user.imagePath) {
       deleteObject(deleteRef)
         .then(() => {
           console.log("Old profile picture deleted");
@@ -60,17 +63,15 @@ const Profile = () => {
       });
 
       if (image) await uploadProfilePic(image, imagePath);
-      setLoading(false)
-      getUser()
+      setLoading(false);
+      getUser();
       fetchUsersPosts();
-      closeModal()
-
+      closeModal();
     }
   };
 
-
-  const handleProfilePicDelete = async() => {
-    setLoading(true)
+  const handleProfilePicDelete = async () => {
+    setLoading(true);
     user.image &&
       deleteObject(deleteRef)
         .then(() => {
@@ -80,11 +81,11 @@ const Profile = () => {
           toast(error, { theme: "dark" });
         });
 
-      await deleteProfilePic();
-      closeModal()
-      getUser()
-      setLoading(false)
-  }
+    await deleteProfilePic();
+    closeModal();
+    getUser();
+    setLoading(false);
+  };
 
   const capitaliseText = (text) => {
     const str = text;
@@ -151,9 +152,24 @@ const Profile = () => {
                   setImageUpload(event.target.files[0]);
                 }}
               />
-              <button className={`btn btn-primary ${imageUpload ? '' : 'disabled'} mt-2`} type="submit">
-              {loading ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> : 'Upload'}
-              </button>
+              <div className="d-grid">
+                <button
+                  className={`btn btn-primary ${
+                    imageUpload ? "" : "disabled"
+                  } mt-2`}
+                  type="submit"
+                >
+                  {loading ? (
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                  ) : (
+                    "Upload"
+                  )}
+                </button>
+              </div>
             </form>
           ) : null}
           <button className="btn btn-danger" onClick={closeModal}>
@@ -183,20 +199,29 @@ const Profile = () => {
 
           <div className="profile-info mt-4 row d-flex align-items-center">
             <div className="text-center col lh-half">
-              <span className="h5">{usersPost.length}</span><br />
+              <span className="h5">{usersPost.length}</span>
+              <br />
               <span className="small text-muted">Posts</span>
             </div>
             <div className="text-center col lh-half">
-              <span className="h5">{user?.followers.length}</span><br />
+              <span className="h5">{user?.followers.length}</span>
+              <br />
               <span className="small text-muted">Followers</span>
             </div>
             <div className="text-center col lh-half">
-              <span className="h5">{user?.following.length}</span><br />
+              <span className="h5">{user?.following.length}</span>
+              <br />
               <span className="small text-muted">Following</span>
             </div>
           </div>
         </div>
-      ) : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+      ) : (
+        <span
+          className="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+      )}
 
       {/* Post section */}
       <div className=" mid-heading-text mt-4 container">

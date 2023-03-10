@@ -18,12 +18,11 @@ const CreatePost = () => {
   };
 
   const [imageUpload, setImageUpload] = useState(null);
-  const [loading, setLoading] = useState(false)
-
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     if (imageUpload) {
       const imagePath = `images/${imageUpload.name + v4()}`;
       const imageRef = ref(storage, imagePath);
@@ -41,7 +40,7 @@ const CreatePost = () => {
     if (imageUpload === null) {
       createPost("", "", postData.textData);
     }
-    setLoading(false)
+    setLoading(false);
     navigate("/");
   };
 
@@ -66,7 +65,9 @@ const CreatePost = () => {
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="text" className="form-label"></label>
+          <label htmlFor="text" className="form-label">
+            Caption
+          </label>
           <textarea
             type="text"
             className="form-control"
@@ -78,12 +79,19 @@ const CreatePost = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          {loading 
-          ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          : 'Post'
-        }
-        </button>
+        <div className="d-grid">
+          <button type="submit" className="btn btn-primary">
+            {loading ? (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            ) : (
+              "Post"
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
