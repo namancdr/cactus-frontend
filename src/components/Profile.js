@@ -151,6 +151,7 @@ const Profile = () => {
                 onChange={(event) => {
                   setImageUpload(event.target.files[0]);
                 }}
+                autoComplete="off"
               />
               <div className="d-grid">
                 <button

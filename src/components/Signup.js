@@ -15,7 +15,7 @@ const Signup = () => {
     password: "",
     cpassword: "",
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const { name, email, username, password, cpassword } = formData;
 
   const handleChange = (e) => {
@@ -27,14 +27,14 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     if (cpassword === password) {
       await createUser(formData);
-      setLoading(false)
+      setLoading(false);
       navigate("/");
     } else {
       console.log("Password do not match!");
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -53,6 +53,7 @@ const Signup = () => {
             value={name}
             onChange={handleChange}
             placeholder="Name"
+            autoComplete="off"
             required
           />
         </div>
@@ -66,6 +67,7 @@ const Signup = () => {
             value={username}
             onChange={handleChange}
             placeholder="Choose a unique Username"
+            autoComplete="off"
             required
           />
         </div>
@@ -79,6 +81,7 @@ const Signup = () => {
             value={email}
             onChange={handleChange}
             placeholder="Email"
+            autoComplete="off"
             required
           />
         </div>
@@ -91,6 +94,7 @@ const Signup = () => {
             value={password}
             onChange={handleChange}
             placeholder="Password"
+            autoComplete="off"
             required
           />
         </div>
@@ -103,15 +107,21 @@ const Signup = () => {
             name="cpassword"
             value={cpassword}
             onChange={handleChange}
+            autoComplete="off"
             required
           />
         </div>
         <div className="d-grid my-4">
           <button type="submit" className="btn btn-primary">
-          {loading 
-          ? <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          : 'Signup'
-        }
+            {loading ? (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            ) : (
+              "Signup"
+            )}
           </button>
         </div>
       </form>

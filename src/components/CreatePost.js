@@ -62,6 +62,7 @@ const CreatePost = () => {
             onChange={(event) => {
               setImageUpload(event.target.files[0]);
             }}
+            autoComplete="off"
           />
         </div>
         <div className="mb-3">
@@ -76,6 +77,7 @@ const CreatePost = () => {
             onChange={handleChange}
             value={postData.textData}
             placeholder="Enter your thoughts here!"
+            autoComplete="off"
             required
           />
         </div>
