@@ -292,10 +292,11 @@ const PostCard = (props) => {
           </div>
           <div className="d-flex mt-2">
             <p className="small">
-              {post.likes.length} <span className="text-muted">likes</span>{" "}
+              <span className="text-muted">{post.likes.length} likes</span>{" "}
               &nbsp;&nbsp; • &nbsp;&nbsp;{" "}
-              {filteredComments && filteredComments.length}{" "}
-              <span className="text-muted">comments</span>
+              <span className="text-muted" onClick={handleCommentBtn}>
+                {filteredComments && filteredComments.length} comments
+              </span>
             </p>
           </div>
         </div>
