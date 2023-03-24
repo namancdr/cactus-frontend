@@ -13,7 +13,7 @@ const Bookmarks = () => {
 
   return (
     <div className="component-style">
-      <div className="mid-heading-text container">
+      <div className="mid-heading-text container max-width">
         <h5>Saved Posts</h5>
         <hr />
         <span className="text-muted">

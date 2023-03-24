@@ -39,7 +39,8 @@ const Signup = () => {
   };
 
   return (
-    <div className="login-container d-flex flex-column align-items-center justify-content-center">
+    <div className="w-100 d-flex flex-colum justify-content-center">
+      <div className="login-container d-flex flex-column align-items-center justify-content-center">
       <img src={bigLogo} alt="Cactus" className="mb-4" />
 
       <form onSubmit={handleSubmit} className="login-form mt-2">
@@ -128,6 +129,7 @@ const Signup = () => {
       <p>
         Don't have an account ? <Link to="/login">Login</Link>
       </p>
+    </div>
     </div>
   );
 };

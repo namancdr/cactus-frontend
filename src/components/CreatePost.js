@@ -45,7 +45,7 @@ const CreatePost = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: "80px" }}>
+    <div className="container max-width" style={{ marginTop: "80px" }}>
       <h2>Create Post</h2>
       <hr />
       <form onSubmit={handleSubmit}>

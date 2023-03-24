@@ -121,129 +121,131 @@ const Profile = () => {
 
   return (
     <div className="component-style">
-      <div className="modal-container">
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={closeModal}
-          style={customStyles}
-          contentLabel="Edit Note Modal"
-          overlayClassName="modal-overlay"
-        >
-          <div>
-            <p onClick={() => setFormVisiblity(!formVisiblity)}>
-              <img src={pictureIcon} alt="" />
-              {formVisiblity ? " Cancel" : " New profile picture"}
-            </p>
-            {user.image ? (
-              <p onClick={handleProfilePicDelete}>
-                <img src={trashIcon} alt="" /> Delete current picture
+      <div className="">
+        <div className="modal-container">
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles}
+            contentLabel="Upload profile pic Modal"
+            overlayClassName="modal-overlay"
+          >
+            <div>
+              <p onClick={() => setFormVisiblity(!formVisiblity)}>
+                <img src={pictureIcon} alt="" />
+                {formVisiblity ? " Cancel" : " New profile picture"}
               </p>
+              {user.image ? (
+                <p onClick={handleProfilePicDelete}>
+                  <img src={trashIcon} alt="" /> Delete current picture
+                </p>
+              ) : null}
+            </div>
+            {formVisiblity ? (
+              <form className="my-4" onSubmit={handleSubmit}>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="exampleInputImage1"
+                  name="image"
+                  aria-describedby="imageHelp"
+                  onChange={(event) => {
+                    setImageUpload(event.target.files[0]);
+                  }}
+                  autoComplete="off"
+                />
+                <div className="d-grid">
+                  <button
+                    className={`btn btn-primary ${
+                      imageUpload ? "" : "disabled"
+                    } mt-2`}
+                    type="submit"
+                  >
+                    {loading ? (
+                      <span
+                        className="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                    ) : (
+                      "Upload"
+                    )}
+                  </button>
+                </div>
+              </form>
             ) : null}
-          </div>
-          {formVisiblity ? (
-            <form className="my-4" onSubmit={handleSubmit}>
-              <input
-                type="file"
-                className="form-control"
-                id="exampleInputImage1"
-                name="image"
-                aria-describedby="imageHelp"
-                onChange={(event) => {
-                  setImageUpload(event.target.files[0]);
-                }}
-                autoComplete="off"
-              />
-              <div className="d-grid">
-                <button
-                  className={`btn btn-primary ${
-                    imageUpload ? "" : "disabled"
-                  } mt-2`}
-                  type="submit"
-                >
-                  {loading ? (
-                    <span
-                      className="spinner-border spinner-border-sm"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
-                  ) : (
-                    "Upload"
-                  )}
-                </button>
-              </div>
-            </form>
-          ) : null}
-          <button className="btn btn-danger" onClick={closeModal}>
-            close
-          </button>
-        </Modal>
-      </div>
-
-      {/* Profile */}
-      {user && usersPost ? (
-        <div
-          className="container profile-section d-flex align-items-center justify-content-center flex-column"
-          style={{ marginTop: "70px" }}
-        >
-          <div className="">
-            <img
-              src={user.image ? user.image : DefaultProfilePic}
-              className="profile-pic img-fluid"
-              alt="profile"
-              onClick={openModal}
-            />
-            <div className="text-center mt-2" style={{ lineHeight: "0" }}>
-              <h5>{user.name && capitaliseText(user.name)}</h5>
-              <span className="text-muted small">@{user.username}</span>
-            </div>
-          </div>
-
-          <div className="profile-info mt-4 row d-flex align-items-center">
-            <div className="text-center col lh-half">
-              <span className="h5">{usersPost.length}</span>
-              <br />
-              <span className="small text-muted">Posts</span>
-            </div>
-            <div className="text-center col lh-half">
-              <span className="h5">{user?.followers.length}</span>
-              <br />
-              <span className="small text-muted">Followers</span>
-            </div>
-            <div className="text-center col lh-half">
-              <span className="h5">{user?.following.length}</span>
-              <br />
-              <span className="small text-muted">Following</span>
-            </div>
-          </div>
+            <button className="btn btn-sm btn-danger" onClick={closeModal}>
+              close
+            </button>
+          </Modal>
         </div>
-      ) : (
-        <span
-          className="spinner-border spinner-border-sm"
-          role="status"
-          aria-hidden="true"
-        ></span>
-      )}
 
-      {/* Post section */}
-      <div className=" mid-heading-text mt-4 container">
-        <h5>Your Posts</h5>
-        <hr />
-        <span className="text-muted">
-          {usersPost &&
-            usersPost.length === 0 &&
-            "You have not posted anything yet!"}
-        </span>
+        {/* Profile */}
+        {user && usersPost ? (
+          <div
+            className="container profile-section d-flex align-items-center justify-content-center flex-column"
+            style={{ marginTop: "70px" }}
+          >
+            <div className="text-center">
+              <img
+                src={user.image ? user.image : DefaultProfilePic}
+                className="profile-pic img-fluid"
+                alt="profile"
+                onClick={openModal}
+              />
+              <div className="text-center mt-2" style={{ lineHeight: "0" }}>
+                <h5>{user.name && capitaliseText(user.name)}</h5>
+                <span className="text-muted small">@{user.username}</span>
+              </div>
+            </div>
+
+            <div className="profile-info mt-4 row d-flex align-items-center">
+              <div className="text-center col lh-half">
+                <span className="h5">{usersPost.length}</span>
+                <br />
+                <span className="small text-muted">Posts</span>
+              </div>
+              <div className="text-center col lh-half">
+                <span className="h5">{user?.followers.length}</span>
+                <br />
+                <span className="small text-muted">Followers</span>
+              </div>
+              <div className="text-center col lh-half">
+                <span className="h5">{user?.following.length}</span>
+                <br />
+                <span className="small text-muted">Following</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        )}
+
+        {/* Post section */}
+        <div className="max-width mt-4 container ">
+          <h5>Your Posts</h5>
+          <hr />
+          <span className="text-muted">
+            {usersPost &&
+              usersPost.length === 0 &&
+              "You have not posted anything yet!"}
+          </span>
+        </div>
+        {usersPost ? (
+          usersPost
+            .slice()
+            .reverse()
+            .map((post) => {
+              return <PostCard key={post._id} post={post} showOptions={true} />;
+            })
+        ) : (
+          <ContentLoading />
+        )}
       </div>
-      {usersPost ? (
-        usersPost
-          .slice()
-          .reverse()
-          .map((post) => {
-            return <PostCard key={post._id} post={post} showOptions={true} />;
-          })
-      ) : (
-        <ContentLoading />
-      )}
     </div>
   );
 };

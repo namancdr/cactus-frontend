@@ -18,7 +18,7 @@ const Navbar = () => {
     isAuthenticated && (
       <>
         <nav className="navbar navbar-expand-lg position-fixed top-0 ">
-          <div className="container-fluid d-flex justify-content-between">
+          <div className="container-fluid d-flex justify-content-between max-width">
             <Link className="navbar-brand text-light" to="/">
               <img src={logo} alt="Cactus" />
             </Link>

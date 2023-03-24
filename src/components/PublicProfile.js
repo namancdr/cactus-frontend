@@ -54,7 +54,7 @@ const PublicProfile = () => {
   if (user) {
     profileContent = (
       <div className="container profile-section d-flex align-items-center flex-column">
-        <div className="">
+        <div className="text-center">
           <img
             src={user?.image ?? DefaultProfilePic}
             className="profile-pic img-fluid"
@@ -132,7 +132,7 @@ const PublicProfile = () => {
       {profileContent}
 
       {/* Post section */}
-      <div className="mid-heading-text mt-4 container">
+      <div className="mid-heading-text mt-4 max-width container">
         <h5>Posts from {user?.name} </h5>
         <hr />
         <span className="text-muted">

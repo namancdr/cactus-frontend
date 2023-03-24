@@ -131,6 +131,10 @@ const PostCard = (props) => {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
+      background: "#0B0A0D",
+      maxHeight: "400px",
+      maxWidth: "350px",
+      width: "330px",
     },
   };
 
@@ -166,9 +170,11 @@ const PostCard = (props) => {
         onRequestClose={closeModal}
         style={customStyles}
         contentLabel="Edit Note Modal"
+        overlayClassName="modal-overlay"
       >
-        <form className="my-4" onSubmit={handleEdit}>
-          <h2>Edit Post</h2>
+        <form className="my-2" onSubmit={handleEdit}>
+          <h4>Edit Post</h4>
+          <hr />
           <div className="mb-3">
             <label htmlFor="textData" className="form-label">
               Caption
@@ -182,8 +188,11 @@ const PostCard = (props) => {
               onChange={handleEditChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-sm btn-primary">
             Update
+          </button>
+          <button className="btn btn-sm btn-danger mx-1" onClick={closeModal}>
+            close
           </button>
         </form>
       </Modal>

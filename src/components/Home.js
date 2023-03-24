@@ -27,12 +27,12 @@ const Home = () => {
   return (
     <div className="component-style">
       {user ? (
-        <div className="container">
+        <div className="container max-width">
           <strong>
             <span className="text-muted">{greetingText},</span>
           </strong>
           <br />
-          <span className="h1 text-capitalize">
+          <span className="h3 text-capitalize">
             <strong>{user.name}</strong>
           </span><hr />
         </div>

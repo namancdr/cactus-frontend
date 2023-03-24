@@ -35,7 +35,6 @@ const Search = () => {
           value={searchInput}
           autoComplete="off"
         />
-        {/* <button className="btn btn-primary" onClick={() => searchUserCall(searchInput)}>search</button> */}
       </div>
 
       {/* Results */}

@@ -27,7 +27,7 @@ body {
 .footer {
   background: #0b0a0d;
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;
 }
 
 .active-footer {
@@ -95,7 +95,7 @@ body {
 .profile-info {
   height: 72px;
   width: 95%;
-  max-width: 350px;
+  max-width: 400px;
   background-color: #1a191c;
   border-radius: 16px;
 }
@@ -105,7 +105,7 @@ body {
 }
 
 .follow-btn-container {
-  max-width: 350px;
+  max-width: 400px;
 }
 
 .modal-overlay {
@@ -136,9 +136,14 @@ body {
   width: 22px;
 }
 
+.max-width{
+  max-width: 400px;
+}
+
 .login-container {
   height: 90vh;
   width: 100%;
+  max-width: 400px;
 }
 
 .login-form {
@@ -154,7 +159,7 @@ body {
 .search-form,
 .search {
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;
 }
 
 .search-form input {
@@ -167,13 +172,12 @@ body {
 }
 
 @media only screen and (min-width: 600px) {
-  .navbar,
-  .mid-heading-text {
+  .navbar{
     padding: 0px 200px;
   }
 
   .post-card {
-    width: 350px;
+    width: 400px;
     padding: 4px 1%;
   }
 }
