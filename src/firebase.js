@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDlBakiMLZGRvesPZ_VENATq8gY1mgRbzo",
-  authDomain: "socio-image-1ee68.firebaseapp.com",
-  projectId: "socio-image-1ee68",
-  storageBucket: "socio-image-1ee68.appspot.com",
-  messagingSenderId: "472681252914",
-  appId: "1:472681252914:web:6666dd25a3b3813de7542b",
-  measurementId: "G-GPRF3SQT68",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSANGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
