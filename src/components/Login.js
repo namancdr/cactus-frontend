@@ -79,6 +79,12 @@ const Login = () => {
         <p>
           Don't have an account ? <Link to="/signup">Sign up</Link>
         </p>
+
+      <div className="border-white border p-2 rounded">
+        <p>Try the app using below credential: </p>
+        <span>Email: jordan@example.com</span> <br />
+        <span>Password: jordan</span>
+      </div>
       </div>
     </div>
   );
